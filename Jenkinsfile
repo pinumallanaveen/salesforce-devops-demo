@@ -33,6 +33,18 @@ pipeline {
             }
         }
 
+        stage('Setup Salesforce CLI') {
+            steps {
+                sh '''
+                if ! command -v sf >/dev/null 2>&1; then
+                    npm install --global @salesforce/cli
+                fi
+
+                sf --version
+                '''
+            }
+        }
+
         stage('Validate') {
             steps {
                 sh '''
