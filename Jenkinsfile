@@ -59,7 +59,23 @@ pipeline {
                 withCredentials([string(credentialsId: 'salesforce-auth-url', variable: 'SF_AUTH_URL')]) {
                     sh '''
                     set +x
-                    printf "%s" "$SF_AUTH_URL" > sf-auth-url.txt
+                    CLEAN_SF_AUTH_URL="$(printf "%s" "$SF_AUTH_URL" | tr -d '\\r\\n')"
+
+                    if [ -z "$CLEAN_SF_AUTH_URL" ]; then
+                        echo "Salesforce auth URL credential is empty. Check Jenkins credential ID: salesforce-auth-url"
+                        exit 1
+                    fi
+
+                    case "$CLEAN_SF_AUTH_URL" in
+                        force://*@*.salesforce.com|force://*@*.force.com|force://*@*.cloudforce.com)
+                            ;;
+                        *)
+                            echo "Invalid Salesforce auth URL. Jenkins secret must be the full Sfdx Auth Url starting with force:// and ending with your Salesforce domain."
+                            exit 1
+                            ;;
+                    esac
+
+                    printf "%s" "$CLEAN_SF_AUTH_URL" > sf-auth-url.txt
                     ./sf-cli/bin/sf org login sfdx-url \
                     --sfdx-url-file sf-auth-url.txt \
                     --alias target-org \
