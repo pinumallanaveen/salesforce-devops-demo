@@ -37,10 +37,10 @@ pipeline {
             steps {
                 sh '''
                 if [ ! -x sf-cli/bin/sf ]; then
-                    rm -rf sf-cli sf-linux-x64.tar.xz
+                    rm -rf sf-cli sf-linux-x64.tar.gz
                     mkdir -p sf-cli
-                    curl -L -o sf-linux-x64.tar.xz https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.xz
-                    tar -xJf sf-linux-x64.tar.xz -C sf-cli --strip-components 1
+                    curl -L -o sf-linux-x64.tar.gz https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.gz
+                    tar -xzf sf-linux-x64.tar.gz -C sf-cli --strip-components 1
                 fi
 
                 ./sf-cli/bin/sf --version
