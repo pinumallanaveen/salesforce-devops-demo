@@ -119,9 +119,7 @@ pipeline {
                 '''
             }
         }
-
-        }
-
+        
         stage('Logout Salesforce') {
             steps {
                 sh '''
