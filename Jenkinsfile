@@ -36,20 +36,18 @@ pipeline {
         stage('Setup Salesforce CLI') {
             steps {
                 sh '''
-                if [ ! -x sf-cli/bin/sf ]; then
-                    ARCH="$(uname -m)"
+                ARCH="$(uname -m)"
 
-                    if [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
-                        SF_CLI_ARCH="arm64"
-                    else
-                        SF_CLI_ARCH="x64"
-                    fi
-
-                    rm -rf sf-cli sf-linux-*.tar.gz
-                    mkdir -p sf-cli
-                    curl -L -o sf-linux-${SF_CLI_ARCH}.tar.gz https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-${SF_CLI_ARCH}.tar.gz
-                    tar -xzf sf-linux-${SF_CLI_ARCH}.tar.gz -C sf-cli --strip-components 1
+                if [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
+                    SF_CLI_ARCH="arm64"
+                else
+                    SF_CLI_ARCH="x64"
                 fi
+
+                rm -rf sf-cli sf-linux-*.tar.gz
+                mkdir -p sf-cli
+                curl -L -o sf-linux-${SF_CLI_ARCH}.tar.gz https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-${SF_CLI_ARCH}.tar.gz
+                tar -xzf sf-linux-${SF_CLI_ARCH}.tar.gz -C sf-cli --strip-components 1
 
                 ./sf-cli/bin/sf --version
                 '''
