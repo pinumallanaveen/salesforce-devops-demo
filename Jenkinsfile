@@ -59,6 +59,7 @@ pipeline {
                 withCredentials([string(credentialsId: 'salesforce-auth-url', variable: 'SF_AUTH_URL')]) {
                     sh '''
                     set +x
+                    trap 'rm -f sf-auth-url.txt' EXIT
                     CLEAN_SF_AUTH_URL="$(printf "%s" "$SF_AUTH_URL" | tr -d '\\r\\n')"
 
                     if [ -z "$CLEAN_SF_AUTH_URL" ]; then
@@ -81,9 +82,7 @@ pipeline {
                     --alias target-org \
                     --set-default
                     rm -f sf-auth-url.txt
-                    set -x
-
-                    ./sf-cli/bin/sf org display --target-org target-org
+                    echo "Salesforce authentication completed."
                     '''
                 }
             }
