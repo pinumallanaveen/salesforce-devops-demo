@@ -37,10 +37,18 @@ pipeline {
             steps {
                 sh '''
                 if [ ! -x sf-cli/bin/sf ]; then
-                    rm -rf sf-cli sf-linux-x64.tar.gz
+                    ARCH="$(uname -m)"
+
+                    if [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
+                        SF_CLI_ARCH="arm64"
+                    else
+                        SF_CLI_ARCH="x64"
+                    fi
+
+                    rm -rf sf-cli sf-linux-*.tar.gz
                     mkdir -p sf-cli
-                    curl -L -o sf-linux-x64.tar.gz https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.gz
-                    tar -xzf sf-linux-x64.tar.gz -C sf-cli --strip-components 1
+                    curl -L -o sf-linux-${SF_CLI_ARCH}.tar.gz https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-${SF_CLI_ARCH}.tar.gz
+                    tar -xzf sf-linux-${SF_CLI_ARCH}.tar.gz -C sf-cli --strip-components 1
                 fi
 
                 ./sf-cli/bin/sf --version
