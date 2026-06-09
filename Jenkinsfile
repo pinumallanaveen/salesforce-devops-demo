@@ -120,6 +120,39 @@ pipeline {
             }
         }
 
+        stage('Check Docker') {
+            steps {
+                sh '''
+                docker --version
+                docker info
+                '''
+            }
+        }
+
+        stage('Build nginx Image') {
+            steps {
+                sh '''
+                docker build \
+                -t salesforce-devops-demo-nginx:latest \
+                nginx
+                '''
+            }
+        }
+
+        stage('Deploy nginx Container') {
+            steps {
+                sh '''
+                docker stop salesforce-devops-demo-nginx || true
+                docker rm salesforce-devops-demo-nginx || true
+
+                docker run -d \
+                --name salesforce-devops-demo-nginx \
+                -p 8081:80 \
+                salesforce-devops-demo-nginx:latest
+                '''
+            }
+        }
+
         stage('Logout Salesforce') {
             steps {
                 sh '''
